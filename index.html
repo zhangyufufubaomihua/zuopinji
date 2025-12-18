@@ -7,21 +7,23 @@
     <style>
         body { background: #1a1a1a; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .gallery { max-width: 1200px; width: 100%; }
-        .item { margin-bottom: 30px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; }
+        .item { margin-bottom: 30px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; background: #252525; min-height: 200px; }
         img { width: 100%; display: block; height: auto; transition: transform 0.3s; }
-        img:hover { transform: scale(1.02); }
+        img:hover { transform: scale(1.01); }
+        /* 如果图片加载不出来，显示一行字提示 */
+        img:after { content: "图片加载中或名称不匹配"; color: #666; display: block; padding: 20px; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="gallery" id="gallery">
-        </div>
+    <div class="gallery" id="gallery"></div>
     <script>
         const gallery = document.getElementById('gallery');
-        // 循环生成76张图片
-        for (let i = 1; i <= 76; i++) {
+        // 修改点：从 0 开始，循环到 100 (根据你截图里的 100.png)
+        for (let i = 0; i <= 100; i++) {
             const div = document.createElement('div');
             div.className = 'item';
-            div.innerHTML = <img src="${i}.png" alt="作品 ${i}" loading="lazy">`;`
+            // 核心修改：确保后缀是小写 .png，并且监听加载错误
+            div.innerHTML = `<img src="${i}.png" alt="作品 ${i}" onerror="this.parentElement.style.display='none'" loading="lazy">`;
             gallery.appendChild(div);
         }
     </script>
