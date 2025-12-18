@@ -5,61 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的作品集</title>
     <style>
+        /* 1. 基础样式 */
         body { background: #1a1a1a; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .gallery { max-width: 1200px; width: 100%; }
         .item { 
-            margin-bottom: 30px; 
-            width: 100%; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            border-radius: 8px; 
-            overflow: hidden; 
-            background: #252525; /* 图片加载前的占位底色 */
-            min-height: 300px; /* 预留高度，防止页面抖动 */
+            margin-bottom: 30px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            border-radius: 8px; overflow: hidden; background: #252525; min-height: 300px; 
         }
-        img { 
-            width: 100%; 
-            display: block; 
-            height: auto; 
-            opacity: 0; /* 初始透明，加载完再显示 */
-            transition: opacity 0.8s; /* 优雅的淡入效果 */
-        }
-    #backToTop {
+        img { width: 100%; display: block; height: auto; opacity: 0; transition: opacity 0.8s; }
+
+        /* 2. 回到顶部按钮样式 - 改成了蓝色更显眼 */
+        #backToTop {
             position: fixed;
             bottom: 40px;
             right: 40px;
-            z-index: 99;
-            width: 50px;
-            height: 50px;
-            background-color: #ffffff;
-            color: #000;
+            z-index: 999; /* 确保它在最前面 */
+            width: 60px;
+            height: 60px;
+            background-color: #007AFF; /* 亮蓝色 */
+            color: white;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            display: none;
-            font-size: 24px;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: transform 0.2s, background-color 0.2s;
-        }
-        #backToTop:hover {
-            background-color: #eeeeee;
-            transform: scale(1.1);
+            display: none; /* 初始隐藏 */
+            font-size: 28px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
     </style>
 </head>
 <body>
+
     <button id="backToTop" title="回到顶部">↑</button>
+
     <div class="gallery" id="gallery"></div>
+
     <script>
+        // 3. 生成图片的脚本
         const gallery = document.getElementById('gallery');
-        // 修改点：从 0 开始，循环到 100 (根据你截图里的 100.png)
         for (let i = 0; i <= 100; i++) {
             const div = document.createElement('div');
             div.className = 'item';
-            // 核心修改：确保后缀是小写 .png，并且监听加载错误
             div.innerHTML = `<img src="${i}.png" alt="作品 ${i}" onload="this.style.opacity=1" onerror="this.parentElement.style.display='none'" loading="lazy">`;
             gallery.appendChild(div);
         }
+
+        // 4. 回到顶部功能脚本
+        const topBtn = document.getElementById("backToTop");
+        
+        window.onscroll = function() {
+            // 当滚动超过 800 像素时才显示按钮
+            if (document.documentElement.scrollTop > 800) {
+                topBtn.style.display = "block";
+            } else {
+                topBtn.style.display = "none";
+            }
+        };
+
+        topBtn.onclick = function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
     </script>
 </body>
 </html>
