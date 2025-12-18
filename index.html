@@ -7,11 +7,22 @@
     <style>
         body { background: #1a1a1a; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .gallery { max-width: 1200px; width: 100%; }
-        .item { margin-bottom: 30px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; background: #252525; min-height: 200px; }
-        img { width: 100%; display: block; height: auto; transition: transform 0.3s; }
-        img:hover { transform: scale(1.01); }
-        /* 如果图片加载不出来，显示一行字提示 */
-        img:after { content: "图片加载中或名称不匹配"; color: #666; display: block; padding: 20px; text-align: center; }
+        .item { 
+            margin-bottom: 30px; 
+            width: 100%; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            border-radius: 8px; 
+            overflow: hidden; 
+            background: #252525; /* 图片加载前的占位底色 */
+            min-height: 300px; /* 预留高度，防止页面抖动 */
+        }
+        img { 
+            width: 100%; 
+            display: block; 
+            height: auto; 
+            opacity: 0; /* 初始透明，加载完再显示 */
+            transition: opacity 0.8s; /* 优雅的淡入效果 */
+        }
     </style>
 </head>
 <body>
