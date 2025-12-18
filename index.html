@@ -34,7 +34,7 @@
             const div = document.createElement('div');
             div.className = 'item';
             // 核心修改：确保后缀是小写 .png，并且监听加载错误
-            div.innerHTML = `<img src="${i}.png" alt="作品 ${i}" onerror="this.parentElement.style.display='none'" loading="lazy">`;
+            div.innerHTML = `<img src="${i}.png" alt="作品 ${i}" onload="this.style.opacity=1" onerror="this.parentElement.style.display='none'" loading="lazy">`;
             gallery.appendChild(div);
         }
     </script>
