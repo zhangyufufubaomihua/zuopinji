@@ -3,45 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的作品集</title>
+    <title>张洋的作品集</title>
     <style>
-        /* 1. 基础样式 */
-        body { background: #1a1a1a; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .gallery { max-width: 1200px; width: 100%; }
-        .item { 
-            margin-bottom: 30px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            border-radius: 8px; overflow: hidden; background: #252525; min-height: 300px; 
+        /* 1. 全局样式 */
+        body { 
+            background: #1a1a1a; 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
         }
-        img { width: 100%; display: block; height: auto; opacity: 0; transition: opacity 0.8s; }
 
-        /* 2. 回到顶部按钮样式 - 改成了蓝色更显眼 */
+        /* 2. 下载按钮的容器：控制初始居中和留白 */
+        .header-container {
+            width: 100%;
+            padding: 80px 0; /* 上下留白 80px */
+            display: flex;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+
+        /* 3. 下载按钮样式 */
+        .download-btn {
+            background-color: #007AFF; /* 亮蓝色更醒目 */
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        /* 4. 当页面下滑时，给按钮添加这个“类”来改变位置 */
+        .download-btn.sticky {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            background-color: rgba(0, 122, 255, 0.9); /* 半透明蓝色 */
+            transform: scale(0.9);
+        }
+
+        /* 5. 画廊容器 */
+        .gallery { 
+            max-width: 1200px; 
+            width: 90%; 
+            padding-bottom: 50px;
+        }
+
+        .item { 
+            margin-bottom: 40px; 
+            width: 100%; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            background: #252525; 
+            min-height: 400px; 
+        }
+
+        img { 
+            width: 100%; 
+            display: block; 
+            height: auto; 
+            opacity: 0; 
+            transition: opacity 1s; 
+        }
+
+        /* 6. 回到顶部按钮 */
         #backToTop {
             position: fixed;
-            bottom: 40px;
-            right: 40px;
-            z-index: 999; /* 确保它在最前面 */
-            width: 60px;
-            height: 60px;
-            background-color: #007AFF; /* 亮蓝色 */
+            bottom: 30px;
+            left: 30px; /* 改到左边，避开右侧的下载按钮 */
+            width: 50px;
+            height: 50px;
+            background-color: #333;
             color: white;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            display: none; /* 初始隐藏 */
-            font-size: 28px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            display: none; 
+            font-size: 24px;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 
-    <button id="backToTop" title="回到顶部">↑</button>
+    <div class="header-container" id="headerContainer">
+        <a href="portfolio.pdf" download="张洋作品集" class="download-btn" id="dlBtn">
+            <span>📥 下载作品集 PDF (完整版)</span>
+        </a>
+    </div>
+
+    <button id="backToTop">↑</button>
 
     <div class="gallery" id="gallery"></div>
 
     <script>
-        // 3. 生成图片的脚本
         const gallery = document.getElementById('gallery');
+        const dlBtn = document.getElementById('dlBtn');
+        const header = document.getElementById('headerContainer');
+
+        // 1. 生成图片
         for (let i = 0; i <= 100; i++) {
             const div = document.createElement('div');
             div.className = 'item';
@@ -49,19 +122,28 @@
             gallery.appendChild(div);
         }
 
-        // 4. 回到顶部功能脚本
-        const topBtn = document.getElementById("backToTop");
-        
+        // 2. 滚动监听：处理下载按钮的平移和固定
         window.onscroll = function() {
-            // 当滚动超过 800 像素时才显示按钮
-            if (document.documentElement.scrollTop > 800) {
+            const scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
+            
+            // 当向下滑动超过 150px 时，按钮移动到右侧
+            if (scrollPos > 150) {
+                dlBtn.classList.add('sticky');
+            } else {
+                dlBtn.classList.remove('sticky');
+            }
+
+            // 回到顶部按钮逻辑
+            const topBtn = document.getElementById("backToTop");
+            if (scrollPos > 800) {
                 topBtn.style.display = "block";
             } else {
                 topBtn.style.display = "none";
             }
         };
 
-        topBtn.onclick = function() {
+        // 3. 回到顶部点击
+        document.getElementById("backToTop").onclick = function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
     </script>
