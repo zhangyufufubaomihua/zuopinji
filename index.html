@@ -75,4 +75,81 @@
             width: 100%; 
             display: block; 
             height: auto; 
-            opacity: 0;
+            opacity: 0; 
+            transition: opacity 1s ease; 
+        }
+
+        /* 6. 回到顶部按钮：放在右下角 */
+        #backToTop {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none; 
+            font-size: 28px;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: background 0.3s;
+        }
+        #backToTop:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container" id="headerContainer">
+        <a href="portfolio.pdf" download="张洋作品集" class="download-btn" id="dlBtn">
+            <span>📥 下载作品集 PDF (完整版)</span>
+        </a>
+    </div>
+
+    <button id="backToTop">↑</button>
+
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const dlBtn = document.getElementById('dlBtn');
+        const topBtn = document.getElementById("backToTop");
+
+        // 1. 生成图片列表
+        for (let i = 0; i <= 100; i++) {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `<img src="${i}.png" alt="作品 ${i}" onload="this.style.opacity=1" onerror="this.parentElement.style.display='none'" loading="lazy">`;
+            gallery.appendChild(div);
+        }
+
+        // 2. 滚动交互逻辑
+        window.onscroll = function() {
+            const scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
+            
+            // 下载按钮：下滑超过 180px 后移动到右侧固定
+            if (scrollPos > 180) {
+                dlBtn.classList.add('sticky');
+            } else {
+                dlBtn.classList.remove('sticky');
+            }
+
+            // 回到顶部按钮：下滑超过 1000px 后显示
+            if (scrollPos > 1000) {
+                topBtn.style.display = "block";
+            } else {
+                topBtn.style.display = "none";
+            }
+        };
+
+        // 3. 点击回到顶部
+        topBtn.onclick = function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+    </script>
+</body>
+</html>
