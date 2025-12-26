@@ -1,166 +1,165 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>张洋的作品集</title>
-    <style>
-        /* 1. 全局样式 */
-        body { 
-            background: #1a1a1a; 
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张洋的作品集</title>
 
-        /* 2. 下载按钮容器 */
-        .header-container {
-            width: 100%;
-            padding: 100px 0;
-            display: flex;
-            justify-content: center;
-        }
+<style>
+/* ========== 全局样式 ========== */
+body{
+    background:#1a1a1a;
+    margin:0; padding:0;
+    display:flex; flex-direction:column;
+    align-items:center;
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+}
 
-        /* 3. 下载按钮基础样式 */
-        .download-btn {
-            background-color: #007AFF; 
-            color: white;
-            padding: 16px 32px;
-            border-radius: 32px;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 1000;
-            white-space: nowrap;
-            cursor: pointer;
-            border: none;
-        }
+/* 下载按钮 */
+.header-container{
+    width:100%; padding:60px 0 20px;
+    display:flex; justify-content:center;
+}
+.download-btn{
+    background:#007AFF;color:#fff;
+    padding:16px 32px;border-radius:32px;
+    font-size:16px;font-weight:bold;
+    border:none;cursor:pointer;
+    box-shadow:0 4px 20px rgba(0,0,0,.4);
+    transition:.4s;
+}
+.download-btn.sticky{
+    position:fixed;top:30px;right:30px;
+    padding:10px 18px;font-size:13px;
+    border-radius:10px;
+}
 
-        /* 4. 滚动时：按钮平移到右上角 */
-        .download-btn.sticky {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            padding: 12px 20px;
-            font-size: 13px;
-            border-radius: 10px;
-            background-color: rgba(0, 122, 255, 0.95);
-        }
+/* 画廊 */
+.gallery{max-width:1200px;width:90%;padding-bottom:80px;}
+.item{margin-bottom:46px;width:100%;
+    background:#252525;overflow:hidden;border-radius:12px;
+    box-shadow:0 12px 40px rgba(0,0,0,.6);min-height:380px;}
+.item img{width:100%;opacity:0;transition:1s;}
+.item.img-error{display:none!important}
 
-        /* 5. 画廊容器 */
-        .gallery { 
-            max-width: 1200px; 
-            width: 90%; 
-            padding-bottom: 80px;
-        }
+/* 返回顶部 */
+#backToTop{
+    position:fixed;bottom:40px;right:40px;
+    width:55px;height:55px;border-radius:50%;
+    border:none;font-size:24px;cursor:pointer;
+    background:#333;color:#fff;display:none;
+    box-shadow:0 4px 15px rgba(0,0,0,.5);
+}
 
-        .item { 
-            margin-bottom: 50px; 
-            width: 100%; 
-            box-shadow: 0 15px 50px rgba(0,0,0,0.7); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            background: #252525; 
-            min-height: 400px; 
-        }
-
-        img { 
-            width: 100%; 
-            display: block; 
-            height: auto; 
-            opacity: 0; 
-            transition: opacity 1s ease; 
-        }
-
-        /* 6. 回到顶部按钮 */
-        #backToTop {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 60px;
-            height: 60px;
-            background-color: #333;
-            color: white;
-            border: 1px solid #555;
-            border-radius: 50%;
-            cursor: pointer;
-            display: none; 
-            font-size: 28px;
-            z-index: 999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-    </style>
+/* 头部胶囊切换 */
+.filter-bar{margin-bottom:22px;}
+.capsule-toggle{
+    background:#efefef;border-radius:999px;
+    padding:4px;position:relative;
+    display:flex;align-items:center;
+}
+.capsule-toggle button{
+    border:none;background:none;padding:8px 26px;
+    font-size:16px;cursor:pointer;opacity:.55;
+}
+.capsule-toggle button.active{opacity:1;font-weight:bold;}
+.capsule-indicator{
+    position:absolute;top:4px;bottom:4px;width:50%;
+    background:white;border-radius:999px;
+    transition:.25s;
+}
+.capsule-toggle.personal-active .capsule-indicator{transform:translateX(100%);}
+.capsule-toggle.portfolio-active .capsule-indicator{transform:translateX(0%);}
+</style>
 </head>
+
 <body>
 
-    <div class="header-container" id="headerContainer">
-        <button class="download-btn" id="dlBtn" onclick="downloadBoth()">
-            <span>📥 下载完整作品集 / 文字版简历</span>
-        </button>
-    </div>
+<!-- 下载按钮 -->
+<div class="header-container">
+    <button id="dlBtn" class="download-btn" onclick="downloadBoth()">📥 下载作品集 / 简历</button>
+</div>
 
-    <button id="backToTop">↑</button>
+<!-- 胶囊切换 -->
+<div class="filter-bar">
+<div id="capsuleToggle" class="capsule-toggle portfolio-active">
+    <div class="capsule-indicator"></div>
+    <button id="btnPortfolio" class="active">作品集</button>
+    <button id="btnPersonal">个人项目</button>
+</div>
+</div>
 
-    <div class="gallery" id="gallery"></div>
+<button id="backToTop">↑</button>
+<div id="gallery" class="gallery"></div>
 
-    <script>
-        // 同时下载两个文件的功能逻辑
-        function downloadBoth() {
-            const files = [
-                { url: 'portfolio.pdf', name: '张洋作品集.pdf' },
-                { url: 'resume.pdf', name: '张洋个人简历.pdf' }
-            ];
-            
-            files.forEach(file => {
-                const link = document.createElement('a');
-                link.href = file.url;
-                link.download = file.name;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-        }
+<script>
+/* 下载作品集和简历 */
+function downloadBoth(){
+    const files=[{url:'portfolio.pdf',name:'张洋作品集.pdf'},
+                 {url:'resume.pdf',name:'张洋简历.pdf'}];
+    files.forEach(f=>{
+        const a=document.createElement("a");
+        a.href=f.url;a.download=f.name;
+        document.body.appendChild(a);a.click();a.remove();
+    });
+}
 
-        const gallery = document.getElementById('gallery');
-        const dlBtn = document.getElementById('dlBtn');
-        const topBtn = document.getElementById("backToTop");
+const gallery=document.getElementById('gallery');
+const btnPortfolio=document.getElementById("btnPortfolio");
+const btnPersonal=document.getElementById("btnPersonal");
 
-        // 1. 生成图片列表
-        for (let i = 0; i <= 100; i++) {
-            const div = document.createElement('div');
-            div.className = 'item';
-            div.innerHTML = `<img src="${i}.png" alt="作品 ${i}" onload="this.style.opacity=1" onerror="this.parentElement.style.display='none'" loading="lazy">`;
-            gallery.appendChild(div);
-        }
+/* ===== 你无需修改 ===== */
+/* 作品集图片 0.png ~ 无限支持 */
+function loadPortfolio(){
+    gallery.innerHTML="";
+    let i=0;
+    function loadNext(){
+        let div=document.createElement("div");div.className="item";
+        let img=document.createElement("img");
+        img.src=i+".png";
+        img.onload=()=>img.style.opacity=1;
+        img.onerror=()=>{div.remove();return;}
+        div.appendChild(img);gallery.appendChild(div);
+        i++; if(i<200) loadNext(); /* 允许未来继续添加 */
+    }
+    loadNext();
+}
 
-        // 2. 滚动交互逻辑
-        window.onscroll = function() {
-            const scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
-            
-            if (scrollPos > 180) {
-                dlBtn.classList.add('sticky');
-            } else {
-                dlBtn.classList.remove('sticky');
-            }
+/* 个人项目 1.png ~ 14.png 自动展示 */
+function loadPersonal(){
+    gallery.innerHTML="";
+    for(let i=1;i<=14;i++){
+        let div=document.createElement("div");div.className="item";
+        let img=document.createElement("img");
+        img.src="个人项目/"+i+".png";
+        img.onload=()=>img.style.opacity=1;
+        img.onerror=()=>div.remove();
+        div.appendChild(img);gallery.appendChild(div);
+    }
+}
 
-            if (scrollPos > 1000) {
-                topBtn.style.display = "block";
-            } else {
-                topBtn.style.display = "none";
-            }
-        };
+/* 胶囊切换逻辑 */
+btnPortfolio.onclick=()=>{
+    capsuleToggle.className="capsule-toggle portfolio-active";
+    btnPortfolio.classList.add("active");btnPersonal.classList.remove("active");
+    loadPortfolio();
+}
+btnPersonal.onclick=()=>{
+    capsuleToggle.className="capsule-toggle personal-active";
+    btnPersonal.classList.add("active");btnPortfolio.classList.remove("active");
+    loadPersonal();
+}
 
-        topBtn.onclick = function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-    </script>
+/* 默认进入作品集 */
+loadPortfolio();
+
+/* 吸附按钮+回顶 */
+window.onscroll=()=>{
+    document.getElementById('dlBtn').classList.toggle('sticky',window.scrollY>200);
+    document.getElementById('backToTop').style.display=window.scrollY>800?"block":"none";
+}
+backToTop.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+</script>
+
 </body>
 </html>
