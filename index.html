@@ -25,6 +25,7 @@ body{
     border:none;cursor:pointer;
     box-shadow:0 4px 20px rgba(0,0,0,.4);
     transition:.4s;
+    z-index: 1001;
 }
 .download-btn.sticky{
     position:fixed;top:30px;right:30px;
@@ -54,11 +55,12 @@ body{
     font-size:24px;border:none;cursor:pointer;
     background:#333;color:#fff;display:none;
     box-shadow:0 4px 15px rgba(0,0,0,.5);
+    z-index: 1001;
 }
 
-/* ========== 5. 胶囊切换 ========== */
+/* ========== 5. 胶囊切换（优化版） ========== */
 .filter-bar{
-    margin-bottom:22px;
+    margin-bottom:30px;
     display:flex;justify-content:center;
 }
 
@@ -66,36 +68,41 @@ body{
     position:relative;
     background:#efefef;
     border-radius:999px;
-    padding:4px;
-    display:flex;align-items:center;
+    padding:4px; /* 外层间距 */
+    display:flex;
+    align-items:center;
     box-shadow:0 0 0 1px #ddd;
-    overflow:hidden;
+    width: 260px; /* 固定整体宽度确保完全对称 */
 }
 
-/* 白色滑块（在下层） */
+/* 白色滑块 */
 .capsule-indicator{
     position:absolute;
-    top:4px;bottom:4px;
-    width:50%;
+    top:4px;
+    bottom:4px;
+    left:4px;
+    width:calc(50% - 4px); /* 减去一边间距 */
     background:#fff;
     border-radius:999px;
-    box-shadow:0 0 10px rgba(0,0,0,.08);
-    transition:.25s;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index:1;
 }
 
-/* 文字按钮（在上层） */
+/* 文字按钮 */
 .capsule-toggle button{
     position:relative;
-    z-index:2;                 /* 关键：文字在滑块上面 */
-    padding:8px 30px;
+    z-index:2;
+    flex:1; /* 两个按钮平分宽度 */
+    padding:10px 0;
     font-size:15px;
     border:none;
     background:none;
     cursor:pointer;
     color:#666;
     transition:.25s;
-    white-space:nowrap;
+    text-align:center;
+    outline: none;
 }
 
 .capsule-toggle button.active{
@@ -103,8 +110,9 @@ body{
     font-weight:bold;
 }
 
+/* 滑块动画逻辑：由于按钮等宽，移动50%总宽即可 */
 .capsule-toggle.portfolio-active .capsule-indicator{
-    transform:translateX(0%);
+    transform:translateX(0);
 }
 .capsule-toggle.personal-active .capsule-indicator{
     transform:translateX(100%);
@@ -114,12 +122,10 @@ body{
 
 <body>
 
-<!-- 下载按钮 -->
 <div class="header-container">
     <button id="dlBtn" class="download-btn" onclick="downloadBoth()">📥 下载作品集 / 简历</button>
 </div>
 
-<!-- 胶囊切换 -->
 <div class="filter-bar">
     <div id="capsuleToggle" class="capsule-toggle portfolio-active">
         <div class="capsule-indicator"></div>
@@ -149,10 +155,11 @@ function downloadBoth(){
 }
 
 const gallery      = document.getElementById('gallery');
+const capsuleToggle = document.getElementById('capsuleToggle');
 const btnPortfolio = document.getElementById('btnPortfolio');
 const btnPersonal  = document.getElementById('btnPersonal');
 
-/* 作品集：根目录 0~200.png（存在才显示） */
+/* 作品集：根目录 0~200.png */
 function loadPortfolio(){
     gallery.innerHTML = "";
     for(let i=0;i<=200;i++){
@@ -199,14 +206,14 @@ btnPersonal.onclick = () => {
 /* 默认显示作品集 */
 loadPortfolio();
 
-/* 滚动时：下载按钮吸顶 + 回到顶部 */
+/* 滚动监听 */
 window.onscroll = () => {
     document.getElementById('dlBtn')
         .classList.toggle('sticky', window.scrollY > 200);
     document.getElementById('backToTop')
         .style.display = window.scrollY > 800 ? "block" : "none";
 };
-backToTop.onclick = () => window.scrollTo({top:0,behavior:"smooth"});
+document.getElementById('backToTop').onclick = () => window.scrollTo({top:0,behavior:"smooth"});
 </script>
 
 </body>
