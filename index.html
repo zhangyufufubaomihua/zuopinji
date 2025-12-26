@@ -14,63 +14,101 @@ body{
 }
 
 /* ========== 2. 下载按钮 ========== */
-.header-container{width:100%;padding:60px 0 20px;display:flex;justify-content:center;}
+.header-container{
+    width:100%;padding:60px 0 20px;
+    display:flex;justify-content:center;
+}
 .download-btn{
-    background:#007AFF;color:#fff;padding:16px 32px;border-radius:32px;
-    font-size:16px;font-weight:bold;border:none;cursor:pointer;
-    box-shadow:0 4px 20px rgba(0,0,0,.4);transition:.4s;
+    background:#007AFF;color:#fff;
+    padding:16px 32px;border-radius:32px;
+    font-size:16px;font-weight:bold;
+    border:none;cursor:pointer;
+    box-shadow:0 4px 20px rgba(0,0,0,.4);
+    transition:.4s;
 }
 .download-btn.sticky{
     position:fixed;top:30px;right:30px;
-    padding:10px 18px;font-size:13px;border-radius:10px;
+    padding:10px 18px;font-size:13px;
+    border-radius:10px;
 }
 
 /* ========== 3. 作品展示区 ========== */
-.gallery{max-width:1200px;width:90%;padding-bottom:80px;}
+.gallery{
+    max-width:1200px;width:90%;padding-bottom:80px;
+}
 .item{
-    margin-bottom:46px;width:100%;background:#252525;
-    overflow:hidden;border-radius:12px;min-height:380px;
+    margin-bottom:46px;width:100%;
+    background:#252525;border-radius:12px;
+    overflow:hidden;min-height:380px;
     box-shadow:0 12px 40px rgba(0,0,0,.6);
 }
-.item img{width:100%;opacity:0;transition:1s;}
+.item img{
+    width:100%;opacity:0;transition:1s;
+}
 .item.img-error{display:none!important}
 
 /* ========== 4. 回到顶部按钮 ========== */
 #backToTop{
-    position:fixed;bottom:40px;right:40px;width:55px;height:55px;
-    border-radius:50%;font-size:24px;border:none;cursor:pointer;
+    position:fixed;bottom:40px;right:40px;
+    width:55px;height:55px;border-radius:50%;
+    font-size:24px;border:none;cursor:pointer;
     background:#333;color:#fff;display:none;
     box-shadow:0 4px 15px rgba(0,0,0,.5);
 }
 
-/* ========== 5. 胶囊切换（恢复原小尺寸） ========== */
-.filter-bar{margin-bottom:22px;display:flex;justify-content:center;}
-
-.capsule-toggle{
-    background:#efefef;border-radius:999px;
-    padding:4px;display:flex;align-items:center;
-    width:auto; /* 恢复为自适应内容 */
-    box-shadow:0 0 0 1px #ddd;overflow:hidden;position:relative;
+/* ========== 5. 胶囊切换 ========== */
+.filter-bar{
+    margin-bottom:22px;
+    display:flex;justify-content:center;
 }
 
+.capsule-toggle{
+    position:relative;
+    background:#efefef;
+    border-radius:999px;
+    padding:4px;
+    display:flex;align-items:center;
+    box-shadow:0 0 0 1px #ddd;
+    overflow:hidden;
+}
+
+/* 白色滑块（在下层） */
+.capsule-indicator{
+    position:absolute;
+    top:4px;bottom:4px;
+    width:50%;
+    background:#fff;
+    border-radius:999px;
+    box-shadow:0 0 10px rgba(0,0,0,.08);
+    transition:.25s;
+    z-index:1;
+}
+
+/* 文字按钮（在上层） */
 .capsule-toggle button{
-    padding:8px 30px;font-size:15px;border:none;cursor:pointer;
-    background:none;color:#555;transition:.25s;
+    position:relative;
+    z-index:2;                 /* 关键：文字在滑块上面 */
+    padding:8px 30px;
+    font-size:15px;
+    border:none;
+    background:none;
+    cursor:pointer;
+    color:#666;
+    transition:.25s;
+    white-space:nowrap;
 }
 
 .capsule-toggle button.active{
-    color:#000;font-weight:bold;
+    color:#000;
+    font-weight:bold;
 }
 
-/* 白色滑块 */
-.capsule-indicator{
-    position:absolute;top:4px;bottom:4px;width:50%;
-    background:white;border-radius:999px;transition:.25s;
-    box-shadow:0 0 10px rgba(0,0,0,.08);
+.capsule-toggle.portfolio-active .capsule-indicator{
+    transform:translateX(0%);
 }
-
-.capsule-toggle.portfolio-active .capsule-indicator{transform:translateX(0%);}
-.capsule-toggle.personal-active .capsule-indicator{transform:translateX(100%);}
+.capsule-toggle.personal-active .capsule-indicator{
+    transform:translateX(100%);
+}
 </style>
 </head>
 
@@ -81,79 +119,94 @@ body{
     <button id="dlBtn" class="download-btn" onclick="downloadBoth()">📥 下载作品集 / 简历</button>
 </div>
 
-<!-- 胶囊切换按钮（恢复为小尺寸） -->
+<!-- 胶囊切换 -->
 <div class="filter-bar">
-<div id="capsuleToggle" class="capsule-toggle portfolio-active">
-    <div class="capsule-indicator"></div>
-    <button id="btnPortfolio" class="active">作品集</button>
-    <button id="btnPersonal">个人项目</button>
-</div>
+    <div id="capsuleToggle" class="capsule-toggle portfolio-active">
+        <div class="capsule-indicator"></div>
+        <button id="btnPortfolio" class="active">作品集</button>
+        <button id="btnPersonal">个人项目</button>
+    </div>
 </div>
 
 <button id="backToTop">↑</button>
 <div id="gallery" class="gallery"></div>
 
 <script>
-/* 下载两个文件 */
+/* 同时下载作品集 + 简历 */
 function downloadBoth(){
-    const files=[{url:'portfolio.pdf',name:'张洋作品集.pdf'},
-                 {url:'resume.pdf',name:'张洋简历.pdf'}];
+    const files=[
+        {url:'portfolio.pdf',name:'张洋作品集.pdf'},
+        {url:'resume.pdf',   name:'张洋简历.pdf'}
+    ];
     files.forEach(f=>{
         const a=document.createElement("a");
-        a.href=f.url;a.download=f.name;
-        document.body.appendChild(a);a.click();a.remove();
+        a.href=f.url;
+        a.download=f.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     });
 }
 
-const gallery=document.getElementById('gallery');
-const btnPortfolio=document.getElementById("btnPortfolio");
-const btnPersonal=document.getElementById("btnPersonal");
+const gallery      = document.getElementById('gallery');
+const btnPortfolio = document.getElementById('btnPortfolio');
+const btnPersonal  = document.getElementById('btnPersonal');
 
-/* 作品集：根目录自动加载0~200.png */
+/* 作品集：根目录 0~200.png（存在才显示） */
 function loadPortfolio(){
-    gallery.innerHTML="";
+    gallery.innerHTML = "";
     for(let i=0;i<=200;i++){
-        let box=document.createElement("div"),img=document.createElement("img");
-        box.className="item"; img.src=i+".png";
-        img.onload=()=>img.style.opacity=1;
-        img.onerror=()=>box.remove();
-        box.appendChild(img);gallery.appendChild(box);
+        const box = document.createElement("div");
+        const img = document.createElement("img");
+        box.className = "item";
+        img.src = i + ".png";
+        img.onload  = () => img.style.opacity = 1;
+        img.onerror = () => box.remove();
+        box.appendChild(img);
+        gallery.appendChild(box);
     }
 }
 
-/* 个人项目：/个人项目文件夹 1~14.png */
+/* 个人项目：/个人项目/1~14.png */
 function loadPersonal(){
-    gallery.innerHTML="";
+    gallery.innerHTML = "";
     for(let i=1;i<=14;i++){
-        let box=document.createElement("div"),img=document.createElement("img");
-        box.className="item"; img.src="个人项目/"+i+".png";
-        img.onload=()=>img.style.opacity=1;
-        img.onerror=()=>box.remove();
-        box.appendChild(img);gallery.appendChild(box);
+        const box = document.createElement("div");
+        const img = document.createElement("img");
+        box.className = "item";
+        img.src = "个人项目/" + i + ".png";
+        img.onload  = () => img.style.opacity = 1;
+        img.onerror = () => box.remove();
+        box.appendChild(img);
+        gallery.appendChild(box);
     }
 }
 
-/* 点击切换 */
-btnPortfolio.onclick=()=>{
-    capsuleToggle.className="capsule-toggle portfolio-active";
-    btnPortfolio.classList.add("active");btnPersonal.classList.remove("active");
+/* 按钮切换逻辑 */
+btnPortfolio.onclick = () => {
+    capsuleToggle.className = "capsule-toggle portfolio-active";
+    btnPortfolio.classList.add("active");
+    btnPersonal.classList.remove("active");
     loadPortfolio();
-}
-btnPersonal.onclick=()=>{
-    capsuleToggle.className="capsule-toggle personal-active";
-    btnPersonal.classList.add("active");btnPortfolio.classList.remove("active");
+};
+btnPersonal.onclick = () => {
+    capsuleToggle.className = "capsule-toggle personal-active";
+    btnPersonal.classList.add("active");
+    btnPortfolio.classList.remove("active");
     loadPersonal();
-}
+};
 
-/* 初始显示作品集 */
+/* 默认显示作品集 */
 loadPortfolio();
 
-/* 滚动交互 */
-window.onscroll=()=>{
-    document.getElementById('dlBtn').classList.toggle('sticky',window.scrollY>200);
-    document.getElementById('backToTop').style.display=window.scrollY>800?"block":"none";
-}
-backToTop.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+/* 滚动时：下载按钮吸顶 + 回到顶部 */
+window.onscroll = () => {
+    document.getElementById('dlBtn')
+        .classList.toggle('sticky', window.scrollY > 200);
+    document.getElementById('backToTop')
+        .style.display = window.scrollY > 800 ? "block" : "none";
+};
+backToTop.onclick = () => window.scrollTo({top:0,behavior:"smooth"});
 </script>
 
 </body>
